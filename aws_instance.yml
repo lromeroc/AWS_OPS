@@ -14,8 +14,28 @@
       wait: false
 
   tasks:
-    # - name: Create a key pair in us-east-1 named app-keypair
+    - name: Create a key pair in us-east-1 named app-keypair
+      amazon.aws.ec2_key:
+        name: app-keypair
+        region: us-east-1
+        state: present
+      register: keypair
     
-    # - name: Create a t3.medium instance called summit-connect-01 using instance_config var
+    
+    - name: Create a t3.medium instance called summit-connect-01 using instance_config var
+      amazon.aws.ec2_instance:
+        name: summit-connect-01
+        key_name: "{{ instance_config.key_name }}"
+        instance_type: t3.medium
+        image_id: "{{ instance_config.image_id }}"
+        wait: "{{ instance_config.wait }}"
+        security_group: "{{ instance_config.security_group }}"
+        vpc_subnet_id: "{{ instance_config.vpc_subnet_id }}"
+        network:
+          assign_public_ip: true
+        tags: "{{ instance_config.tags }}"
+        state: present
+      register: created_instance
+    
     
     
